@@ -215,6 +215,7 @@ class SoundLevelMeterUtility:
         # Write the csv into a reformated shape
         # (additionally, add the frequency to the time,
         # this will allow the data to be inserted into the database)
+        sensor_id = "SDB7"
         print "\nReshaping CSV\n"
         csv_file_location = os.path.join(self._csv_location, csv_file_name)
         print "Input: ", csv_file_location
@@ -224,94 +225,66 @@ class SoundLevelMeterUtility:
                 csv_reader = csv.reader(csv_file, delimiter = ",")
                 reshaped_file_location = os.path.join(self._reshaped_location,\
                     csv_file_name)
-
-                # Pre-extract
-                # Eject the first sets of data that doesn't match the normal
-                # frequency. After this process, the script will process and
-                # reshape the data as normal.
-                precount = 0
-                while 1:
-                    # Pull the next set of data.
-                    current_row = csv_reader.next()
-
-                    # Extract the date time stamp.
-                    current_date = current_row[0]
-
-                    # Initial coditions
-                    if precount == 0:
-                        precount += 1
-
-                        # Save a copy of the current date to next cycle.
-                        last_date = current_date
-                    else:
-                        # Processing the same time set.
-                        if current_date == last_date:
-                            precount += 1
-
-                        # Time set changes to the next set.
-                        else:
-                            # Exit out of the pre-extract sequence if the
-                            # current set matches the required sample size.
-                            # Note: The frequency is decreased by one because
-                            # the recording software we are using only produces
-                            # nine points for a dt of 0.1.
-                            if precount == self._FREQUENCY - 1:
-                                break
-                            # The current set did not have the required amount
-                            # of sample points, so the pre-extract will continue
-                            # to gauge the next set of data points.
-                            else:
-                                precount = 1
-
-                                # Save a copy of the current date to next cycle.
-                                last_date = current_date
-
-                # Extract
+                # Trim the first sample set from the data file.
+                # Pull the first sample point's time stamp.
+                date_current = csv_reader.next()[0]
+                date_last = date_current
+                # Discard sample points until bountary change.
+                while date_current == date_last:
+                    # Update the previous date history.
+                    date_last = date_current
+                    # Pull the next sample point.
+                    row_current = csv_reader.next()
+                    # Extract the sample point's time stamp.
+                    date_current = row_current[0]
+                # Sample file reshaping process.
+                # Open output file.
                 with open(reshaped_file_location, "wb") as new_csv_file:
+                    # Open a CSV writer for the output file.
                     new_csv_writer = csv.writer(new_csv_file, delimiter = ",")
-
-                    # Extract the date time stamp.
-                    datetime_stamp = current_row[0]
-
-                    # Initial extraction.
-                    datetime_stamp = datetime_stamp + ".1"
-                    sensor_id = "SDB7"
-                    new_csv_row = [datetime_stamp, sensor_id, current_row[1]]
-                    new_csv_writer.writerow(new_csv_row)
-                    count = 1
-                    last_date = current_row[0]
-                    for csv_row in csv_reader:
-                        # Check for set changing bountary.
-                        if csv_row[0] == last_date:
-
-                            # Keep track of how many sample points are present.
-                            count += 1
-
-                            # If there are more sample points then expected,
-                            # then script will ignore them and continue.
-                            if count > self._FREQUENCY - 1:
-                                pass
-
-                            # Otherwise, write the sample point with the time
-                            # adjustment into the output file.
-                            else:
-                                datetime_stamp = csv_row[0]
-                                datetime_stamp = datetime_stamp + '.' + str(count)
-                                sensor_id = "SDB7"
-                                new_csv_row = [datetime_stamp, sensor_id, csv_row[1]]
-                                new_csv_writer.writerow(new_csv_row)
-                        # Set bountary changed, reinitial count and write this
-                        # this first sample point into the output file.
+                    # Read an entire sample set to determine frequency.
+                    # Initialize an array for storing a sample set.
+                    row_queue = []
+                    # Push first sample point.
+                    row_queue.append(row_current)
+                    # Update the previous date history.
+                    date_last = date_current
+                    # Read the rest of the sample file.
+                    for row_current in csv_reader:
+                        date_current = row_current[0]
+                        # Extract the date time stamp.
+                        datetime_stamp = row_current[0]
+                        # Store sample point until bountary change.
+                        if date_current == date_last:
+                            row_queue.append(row_current)
+                        # Bountary change.
                         else:
-                            count = 1
-                            datetime_stamp = csv_row[0]
-                            datetime_stamp = datetime_stamp + '.' + str(count)
-                            sensor_id = "SDB7"
-                            new_csv_row = [datetime_stamp, sensor_id, csv_row[1]]
-                            new_csv_writer.writerow(new_csv_row)
-
-                        # Save a copy of the current date to next cycle.
-                        last_date = csv_row[0]
+                            # Find the number of sample points in this set.
+                            frequency = len(row_queue)
+                            # Initialize a counter for sample point.
+                            count = 0
+                            # Read sample point from the queue.
+                            for row_queue_current in row_queue:
+                                # Build new date time stamp.
+                                frac = str("{0:.2f}".format(float(count) / \
+                                           frequency))
+                                frac = frac.split('.')[1]
+                                if frac[1] == '0': frac = frac[:1]
+                                datetime_stamp = row_queue_current[0] + '.' + \
+                                                 frac
+                                # Build reshaped row.
+                                new_csv_row = [datetime_stamp, sensor_id, \
+                                               row_queue_current[1]]
+                                # Write new row into the output file.
+                                new_csv_writer.writerow(new_csv_row)
+                                # Increment the number of sample points.
+                                count += 1
+                            # Empty the row queue for a new sample set.
+                            row_queue = []
+                            # Push first new sample point.
+                            row_queue.append(row_current)
+                        # Update the previous date history.
+                        date_last = date_current
 
     def __extract_non_archive(self, function, file_name):
         """
