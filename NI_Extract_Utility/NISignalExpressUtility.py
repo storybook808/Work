@@ -15,24 +15,26 @@
 
 # Import Libraries
 from nptdms import TdmsFile
-import sys
 import os
 import datetime
 import csv 
+
+#dictionary for tacking on a sensor name & location to a corresponding port
 notes = {'ai0':"NE Anemometer 4'",
-	 'ai1':"SW Anemometer 4'",
-	 'ai2':"SE Anemometer 4'",
-	 'ai3':"W Anemometer 4'",
-	 'ai4':"Center Anemometer 4'",
-	 'ai5':"Center Anemometer 7'6",
-	 'ai6':"E Anemometer 4'",
-	 'ai7':"N Anemometer 4'",
-	 'ai8':"N Anemometer 7'6",
-	 'ai9':"S Setra",
-	 'ai10':"E Outer Setra",
-	 'ai11':"NW P26",
-	 'ai12':"E Inner Setra",
-	 'ai13':"N Setra",}
+         'ai1':"SW Anemometer 4'",
+         'ai2':"SE Anemometer 4'",
+         'ai3':"W Anemometer 4'",
+         'ai4':"Center Anemometer 4'",
+         'ai5':"Center Anemometer 7'6",
+         'ai6':"E Anemometer 4'",
+         'ai7':"N Anemometer 4'",
+         'ai8':"N Anemometer 7'6",
+         'ai9':"S Setra",
+         'ai10':"E Outer Setra",
+         'ai11':"NW P26",
+         'ai12':"E Inner Setra",
+         'ai13':"N Setra",}
+
 # Create Classes
 class GroupChannel:
     """
