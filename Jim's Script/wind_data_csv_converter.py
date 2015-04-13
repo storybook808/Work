@@ -107,7 +107,7 @@ for filename in fileNames:
 				if row[-2] != "missing" and row[-2] != "":
 				 	speed_nums = row[-2].split("&")
 					# Correction coefficient of 1.53 is used to correct wind speed.
-					correct_speed_nums = [float(x) * 1.00 for x in speed_nums[0:3]] #1.53
+					correct_speed_nums = [float(x) * 1.53 for x in speed_nums[0:3]]
 					correct_speed_nums.append(speed_nums[3])
 					row2.extend(correct_speed_nums)
 				else:
