@@ -1,3 +1,6 @@
+__author__ = 'Steven Chen'
+__email__  = 'chenstev@hawaii.edu'
+
 from datetime_util import compare_minute
 from list_statistics import List_Statistics
 from reshape import reshape
@@ -8,27 +11,26 @@ import shutil
 import sys
 
 def main(argv):
-    # Must have two input parameters.
-    if len(argv) != 2:
-        print 'usage: python driver.py <sample size> <threshold)'
-        return
-
-    sample_size = int(argv[0])
-    threshold   = int(argv[1])
-
-    # Process raw data files into the eshape format.
-    reshape()
-
+    # Define input, output, and archive directory names.    
     input_dir_name   = 'reshaped'
     archive_dir_name = 'archived'
-    output_dir_name  = 'output'
-
+    output_dir_name  = 'output'    
+    # Must have two input parameters.
+    if len(argv) != 2:
+        print 'usage: driver.py <sample size (minutes)> <threshold for std>'
+        return
+    # Save the input parameters.
+    sample_size = int(argv[0])
+    threshold   = int(argv[1])
+    # Process raw data files into the eshape format. 
+    # [datetime, sensor id, value]
+    reshape()
+    # Define current working directory.
     current_dir = os.path.dirname(os.path.abspath(__file__))
-
+    # Define input, output, and archive directories
     input_dir   = os.path.join(current_dir, input_dir_name)
     archive_dir = os.path.join(input_dir, archive_dir_name)
     output_dir  = os.path.join(current_dir, output_dir_name)
-
     # Scans for all CSV files within the input directory.
     for item in os.listdir(input_dir):
         if item.split('.')[len(item.split('.'))-1].lower() == 'csv':
