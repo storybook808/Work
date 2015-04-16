@@ -1,3 +1,6 @@
+__author__ = 'Steven Chen'
+__email__  = 'chenstev@hawaii.edu'
+
 from list_statistics import List_Statistics
 
 class Window:
