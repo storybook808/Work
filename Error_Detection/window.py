@@ -1,3 +1,6 @@
+__author__ = 'Steven Chen'
+__email__  = 'chenstev@hawaii.edu'
+
 from list_statistics import List_Statistics
 
 class Window:
@@ -38,16 +41,24 @@ class Window:
     #         count; we can just return the length of one of them.
     def size(self):
         return len(self.datetime)
-        
+
     # Given : Nothing.
-    # Return: A boolean determining if the list is empty.
-    def isEmpty(self):
-        if self.size == 0:
-            return True
-        else:
-            return False
+    # Return: Empties the data structure.    
+    def empty(self):
+        self.datetime = []
+        self.value = List_Statistics([])
     
     # Given : Nothing.
     # Return: A string of what sensor this window is for.
-    def sensor_id(self):
+    def who_am_i(self):
         return self.sensor_id
+        
+    # Given : Nothing.
+    # Return: A string of the first datetime in the list.
+    def startTime(self):
+        return self.datetime[0]
+    
+    # Given : Nothing.
+    # Return: A string of the last datetime in the list.
+    def endTime(self):
+        return self.datetime[-1]
