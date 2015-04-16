@@ -1,9 +1,9 @@
 __author__ = 'Steven Chen'
 __email__  = 'chenstev@hawaii.edu'
 
-from datetime_util import compare_minute
-from list_statistics import List_Statistics
+from datetime_util import compare_hour
 from reshape import reshape
+from window import Window
 
 import csv
 import os
@@ -17,7 +17,7 @@ def main(argv):
     output_dir_name  = 'output'    
     # Must have two input parameters.
     if len(argv) != 2:
-        print 'usage: driver.py <sample size (minutes)> <threshold for std>'
+        print 'usage: driver.py <sample size (hours)> <threshold for std>'
         return
     # Save the input parameters.
     sample_size = int(argv[0])
@@ -34,22 +34,10 @@ def main(argv):
     # Scans for all CSV files within the input directory.
     for item in os.listdir(input_dir):
         if item.split('.')[len(item.split('.'))-1].lower() == 'csv':
-            # Blanks buffer for rolling standard deviation.
-            # t14
-            date_time_1 = []
-            sensor_1 = List_Statistics([])
-            # t15
-            date_time_2 = []
-            sensor_2 = List_Statistics([])
-            # t16
-            date_time_3 = []
-            sensor_3 = List_Statistics([])
-            # t17
-            date_time_4 = []
-            sensor_4 = List_Statistics([])
-            # t18
-            date_time_5 = []
-            sensor_5 = List_Statistics([])
+            
+            windows = [Window('t14'), Window('t15'), Window('t16'), \
+                       Window('t17'), Window('t18')]
+
             # Open input and output files.
             with open(os.path.join(input_dir, item)) as input_file:
                 input_reader = csv.reader(input_file)
@@ -59,227 +47,45 @@ def main(argv):
                     # Write header into the output file.
                     output_writer.writerow(input_reader.next())
                     for row in input_reader:
-                        if row[1] == 't14':
-                            # Add row if the buffer is empty.
-                            if len(date_time_1) == 0:
-                                date_time_1.append(row[0])
-                                sensor_1.append(int(row[2]))
-                            else:
+                        for window in windows:
+                            if row[1] == window.who_am_i():
+                                # Add row if the buffer is empty.
+                                if window.size() == 0:
+                                    window.append(row)
+                                    continue
                                 # Add rows until the buffer contains points
                                 # within the window size.
-                                if compare_minute(date_time_1[0], row[0]) < sample_size:
-                                    date_time_1.append(row[0])
-                                    sensor_1.append(int(row[2]))
-                                else:
-                                    # Grow the buffer if the std is below
-                                    # threshold. This is to capture ranges of
-                                    # bad data that could be larger than the
-                                    # window. Otherwise, pop the first item off
-                                    # and write it to the output file and shift
-                                    # the window.
-                                    if sensor_1.std() > threshold:
-                                        output_writer.writerow([date_time_1.pop(0), 't14', sensor_1.pop(0)])
-                                        date_time_1.append(row[0])
-                                        sensor_1.append(int(row[2]))
-                                    else:
-                                        date_time_1.append(row[0])
-                                        sensor_1.append(int(row[2]))
-                                        if sensor_1.std() <= threshold:
-                                            continue
-                                        else:
-                                            print 'Sensor t14'
-                                            print 'Standard deviation below threshold...'
-                                            print 'Discarding ' + str(len(date_time_1)) + ' items...'
-                                            print 'Starting from ' + date_time_1[0] + ' and ending on ' + date_time_1[-1]
-                                            date_time_1 = [row[0]]
-                                            sensor_1 = List_Statistics([int(row[2])])
-
-                        elif row[1] == 't15':
-                            # Add row if the buffer is empty.
-                            if len(date_time_2) == 0:
-                                date_time_2.append(row[0])
-                                sensor_2.append(int(row[2]))
-                            else:
-                                # Add rows until the buffer contains points
-                                # within the window size.
-                                if compare_minute(date_time_2[0], row[0]) < sample_size:
-                                    date_time_2.append(row[0])
-                                    sensor_2.append(int(row[2]))
-                                else:
-                                    # Grow the buffer if the std is below
-                                    # threshold. This is to capture ranges of
-                                    # bad data that could be larger than the
-                                    # window. Otherwise, pop the first item off
-                                    # and write it to the output file and shift
-                                    # the window.
-                                    if sensor_2.std() > threshold:
-                                        output_writer.writerow([date_time_2.pop(0), 't15', sensor_2.pop(0)])
-                                        date_time_2.append(row[0])
-                                        sensor_2.append(int(row[2]))
-                                    else:
-                                        date_time_2.append(row[0])
-                                        sensor_2.append(int(row[2]))
-                                        if sensor_2.std() <= threshold:
-                                            continue
-                                        else:
-                                            print 'Sensor t15'
-                                            print 'Standard deviation below threshold...'
-                                            print 'Discarding ' + str(len(date_time_2)) + ' items...'
-                                            print 'Starting from ' + date_time_2[0] + ' and ending on ' + date_time_2[-1]
-                                            date_time_2 = [row[0]]
-                                            sensor_2 = List_Statistics([int(row[2])])
-                        elif row[1] == 't16':
-                            # Add row if the buffer is empty.
-                            if len(date_time_3) == 0:
-                                date_time_3.append(row[0])
-                                sensor_3.append(int(row[2]))
-                            else:
-                                # Add rows until the buffer contains points
-                                # within the window size.
-                                if compare_minute(date_time_3[0], row[0]) < sample_size:
-                                    date_time_3.append(row[0])
-                                    sensor_3.append(int(row[2]))
-                                else:
-                                    # Grow the buffer if the std is below
-                                    # threshold. This is to capture ranges of
-                                    # bad data that could be larger than the
-                                    # window. Otherwise, pop the first item off
-                                    # and write it to the output file and shift
-                                    # the window.
-                                    if sensor_3.std() > threshold:
-                                        output_writer.writerow([date_time_3.pop(0), 't16', sensor_3.pop(0)])
-                                        date_time_3.append(row[0])
-                                        sensor_3.append(int(row[2]))
-                                    else:
-                                        date_time_3.append(row[0])
-                                        sensor_3.append(int(row[2]))
-                                        if sensor_3.std() <= threshold:
-                                            continue
-                                        else:
-                                            print 'Sensor t16'
-                                            print 'Standard deviation below threshold...'
-                                            print 'Discarding ' + str(len(date_time_3)) + ' items...'
-                                            print 'Starting from ' + date_time_3[0] + ' and ending on ' + date_time_3[-1]
-                                            date_time_3 = [row[0]]
-                                            sensor_3 = List_Statistics([int(row[2])])
-                        elif row[1] == 't17':
-                            # Add row if the buffer is empty.
-                            if len(date_time_4) == 0:
-                                date_time_4.append(row[0])
-                                sensor_4.append(int(row[2]))
-                            else:
-                                # Add rows until the buffer contains points
-                                # within the window size.
-                                if compare_minute(date_time_4[0], row[0]) < sample_size:
-                                    date_time_4.append(row[0])
-                                    sensor_4.append(int(row[2]))
-                                else:
-                                    # Grow the buffer if the std is below
-                                    # threshold. This is to capture ranges of
-                                    # bad data that could be larger than the
-                                    # window. Otherwise, pop the first item off
-                                    # and write it to the output file and shift
-                                    # the window.
-                                    if sensor_4.std() > threshold:
-                                        output_writer.writerow([date_time_4.pop(0), 't17', sensor_4.pop(0)])
-                                        date_time_4.append(row[0])
-                                        sensor_4.append(int(row[2]))
-                                    else:
-                                        date_time_4.append(row[0])
-                                        sensor_4.append(int(row[2]))
-                                        if sensor_4.std() <= threshold:
-                                            continue
-                                        else:
-                                            print 'Sensor t17'
-                                            print 'Standard deviation below threshold...'
-                                            print 'Discarding ' + str(len(date_time_4)) + ' items...'
-                                            print 'Starting from ' + date_time_4[0] + ' and ending on ' + date_time_4[-1]
-                                            date_time_4 = [row[0]]
-                                            sensor_4 = List_Statistics([int(row[2])])
-                        elif row[1] == 't18':
-                            # Add row if the buffer is empty.
-                            if len(date_time_5) == 0:
-                                date_time_5.append(row[0])
-                                sensor_5.append(int(row[2]))
-                            else:
-                                # Add rows until the buffer contains points
-                                # within the window size.
-                                if compare_minute(date_time_5[0], row[0]) < sample_size:
-                                    date_time_5.append(row[0])
-                                    sensor_5.append(int(row[2]))
-                                else:
-                                    # Grow the buffer if the std is below
-                                    # threshold. This is to capture ranges of
-                                    # bad data that could be larger than the
-                                    # window. Otherwise, pop the first item off
-                                    # and write it to the output file and shift
-                                    # the window.
-                                    if sensor_5.std() > threshold:
-                                        output_writer.writerow([date_time_5.pop(0), 't18', sensor_5.pop(0)])
-                                        date_time_5.append(row[0])
-                                        sensor_5.append(int(row[2]))
-                                    else:
-                                        date_time_5.append(row[0])
-                                        sensor_5.append(int(row[2]))
-                                        if sensor_5.std() <= threshold:
-                                            continue
-                                        else:
-                                            print 'Sensor t18'
-                                            print 'Standard deviation below threshold...'
-                                            print 'Discarding ' + str(len(date_time_5)) + ' items...'
-                                            print 'Starting from ' + date_time_5[0] + ' and ending on ' + date_time_5[-1]
-                                            date_time_5 = [row[0]]
-                                            sensor_5 = List_Statistics([int(row[2])])
-                        else:
-                            print 'Error: Sensor not found.'
-
+                                if compare_hour(window.startTime(), row[0]) < sample_size:
+                                    window.append(row)
+                                    continue
+                                # Grow the buffer if the std is below
+                                # threshold. This is to capture ranges of bad
+                                # data that could be larger than the window.
+                                # Otherwise, pop the first item off and write
+                                # it to the output file and shift the window.
+                                if window.std() > threshold:
+                                    output_writer.writerow(window.pop(0))
+                                    window.append(row)
+                                    continue
+                                window.append(row)
+                                if window.std() > threshold:
+                                    print 'Sensor ' + window.who_am_i()
+                                    print 'Standard deviation below threshold...'
+                                    print 'Discarding ' + str(window.size()) + ' items...'
+                                    print 'Starting from ' + window.startTime() + ' and ending on ' + window.endTime()
+                                    window.empty()
+                                    window.append(row)
                     # Check to see if the remaining items are within the
                     # threshold of good data.
-                    if sensor_1.std() > threshold:
-                        while len(date_time_1) != 0:
-                            output_writer.writerow([date_time_1.pop(0), 't14', sensor_1.pop(0)])
-                    else:
-                        print 'Sensor t14'
-                        print 'Standard deviation below threshold...'
-                        print 'Discarding ' + str(len(date_time_1)) + ' items...'
-                        print 'Starting from ' + date_time_1[0] + ' and ending on ' + date_time_1[-1]
-
-                    if sensor_2.std() > threshold:
-                        while len(date_time_2) != 0:
-                            output_writer.writerow([date_time_2.pop(0), 't15', sensor_2.pop(0)])
-                    else:
-                        print 'Sensor t15'
-                        print 'Standard deviation below threshold...'
-                        print 'Discarding ' + str(len(date_time_2)) + ' items...'
-                        print 'Starting from ' + date_time_2[0] + ' and ending on ' + date_time_2[-1]
-
-                    if sensor_3.std() > threshold:
-                        while len(date_time_3) != 0:
-                            output_writer.writerow([date_time_3.pop(0), 't16', sensor_3.pop(0)])
-                    else:
-                        print 'Sensor t16'
-                        print 'Standard deviation below threshold...'
-                        print 'Discarding ' + str(len(date_time_3)) + ' items...'
-                        print 'Starting from ' + date_time_3[0] + ' and ending on ' + date_time_3[-1]
-
-                    if sensor_4.std() > threshold:
-                        while len(date_time_4) != 0:
-                            output_writer.writerow([date_time_4.pop(0), 't17', sensor_4.pop(0)])
-                    else:
-                        print 'Sensor t17'
-                        print 'Standard deviation below threshold...'
-                        print 'Discarding ' + str(len(date_time_4)) + ' items...'
-                        print 'Starting from ' + date_time_4[0] + ' and ending on ' + date_time_4[-1]
-
-                    if sensor_5.std() > threshold:
-                        while len(date_time_5) != 0:
-                            output_writer.writerow([date_time_5.pop(0), 't18', sensor_5.pop(0)])
-                    else:
-                        print 'Sensor t18'
-                        print 'Standard deviation below threshold...'
-                        print 'Discarding ' + str(len(date_time_5)) + ' items...'
-                        print 'Starting from ' + date_time_5[0] + ' and ending on ' + date_time_5[-1]
-
+                    for window in windows:
+                        if window.std() > threshold:
+                            while window.size() != 0:
+                                output_writer.writerow(window.pop(0))
+                        else:
+                            print 'Sensor ' + window.who_am_i()
+                            print 'Standard deviation below threshold...'
+                            print 'Discarding ' + str(window.size()) + ' items...'
+                            print 'Starting from ' + window.startTime() + ' and ending on ' + window.endTime()
             # Move input file to archive directory.
             shutil.move(os.path.join(input_dir, item), os.path.join(archive_dir, item))
 
