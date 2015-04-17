@@ -17,8 +17,6 @@ __license__ = 'https://raw.github' \
               '.com/Hawaii-Smart-Energy-Project/Maui-Smart-Grid/master/BSD-LICENSE.txt'
 
 import csv
-import sys
-import subprocess
 from datetime import datetime
 import os
 import re
@@ -83,6 +81,8 @@ for filename in fileNames:
 	with open(filename,"r") as f:
 		reader = csv.reader(f)
 		# Dump the header.
+		reader.next()
+		# Dump the first row of data. They cause dup problems.
 		reader.next()
 
 		first = True
