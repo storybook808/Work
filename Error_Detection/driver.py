@@ -6,15 +6,17 @@ from reshape import reshape
 from window import Window
 
 import csv
+import datetime
 import os
 import shutil
 import sys
 
 def main(argv):
-    # Define input, output, and archive directory names.    
+    start_time = datetime.now()
+    # Define input, output, and archive directory names.
     input_dir_name   = 'reshaped'
     archive_dir_name = 'archived'
-    output_dir_name  = 'output'    
+    output_dir_name  = 'output'
     # Must have two input parameters.
     if len(argv) != 2:
         print 'usage: driver.py <sample size (hours)> <threshold for std>'
@@ -22,7 +24,7 @@ def main(argv):
     # Save the input parameters.
     sample_size = int(argv[0])
     threshold   = int(argv[1])
-    # Process raw data files into the eshape format. 
+    # Process raw data files into the eshape format.
     # [datetime, sensor id, value]
     reshape()
     # Define current working directory.
@@ -34,7 +36,7 @@ def main(argv):
     # Scans for all CSV files within the input directory.
     for item in os.listdir(input_dir):
         if item.split('.')[len(item.split('.'))-1].lower() == 'csv':
-            
+
             windows = [Window('t14'), Window('t15'), Window('t16'), \
                        Window('t17'), Window('t18')]
 
@@ -88,6 +90,10 @@ def main(argv):
                             print 'Starting from ' + window.startTime() + ' and ending on ' + window.endTime()
             # Move input file to archive directory.
             shutil.move(os.path.join(input_dir, item), os.path.join(archive_dir, item))
+    end_time = datetime.now()
+    difference = end_time - start_time
+    difference = difference.total_seconds() / 60.0 / 60.0
+    print 'Run Time: ' + difference + ' hours'
 
 if __name__ == '__main__':
     main(sys.argv[1:])
