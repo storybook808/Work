@@ -12,7 +12,7 @@ import shutil
 import sys
 
 def main(argv):
-    start_time = datetime.now()
+    start_time = datetime.datetime.now()
     # Define input, output, and archive directory names.
     input_dir_name   = 'reshaped'
     archive_dir_name = 'archived'
@@ -66,7 +66,7 @@ def main(argv):
                                 # Otherwise, pop the first item off and write
                                 # it to the output file and shift the window.
                                 if window.std() > threshold:
-                                    output_writer.writerow(window.pop(0))
+                                    output_writer.writerow(window.pop())
                                     window.append(row)
                                     continue
                                 window.append(row)
@@ -82,7 +82,7 @@ def main(argv):
                     for window in windows:
                         if window.std() > threshold:
                             while window.size() != 0:
-                                output_writer.writerow(window.pop(0))
+                                output_writer.writerow(window.pop())
                         else:
                             print 'Sensor ' + window.who_am_i()
                             print 'Standard deviation below threshold...'
@@ -90,7 +90,7 @@ def main(argv):
                             print 'Starting from ' + window.startTime() + ' and ending on ' + window.endTime()
             # Move input file to archive directory.
             shutil.move(os.path.join(input_dir, item), os.path.join(archive_dir, item))
-    end_time = datetime.now()
+    end_time = datetime.datetime.now()
     difference = end_time - start_time
     difference = difference.total_seconds() / 60.0 / 60.0
     print 'Run Time: ' + difference + ' hours'
