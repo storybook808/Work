@@ -75,7 +75,7 @@ def main(argv):
                     print 'Processing ' + item
                     input_reader.next()
                     # Write header into the output file.
-                    output_writer.writerow(['datetime', 'type', 'value'])
+                    output_writer.writerow(['datetime', 'value'])
                     for row in input_reader:
                         # Add row if the buffer is empty.
                         if window.size() == 0:
@@ -87,7 +87,7 @@ def main(argv):
                         if compare_minute(window.startTime(), row[0]) == 9:
                             window.append([row[0], window.who_am_i(), row[2]])
                             if window.size() == 10:
-                                output_writer.writerow([window.startTime(), window.who_am_i(), window.average()])
+                                output_writer.writerow([window.startTime(), window.average()])
 
                         if compare_minute(window.startTime(), row[0]) > 9:
                             window.empty()
