@@ -30,7 +30,7 @@ class Window:
     # Given : Nothing.
     # Return: Average of the value lists in the form of a float.
     def average(self):
-        return self.value.average()
+        return self.value.mean()
 
     # Given : Nothing.
     # Return: Standard Deviation of the value lists in the form of a float.
