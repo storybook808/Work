@@ -53,10 +53,12 @@ def main(argv):
                                     continue
                                 if compare_minute(window.startTime(), row[0]) == 9:
                                     window.append(row)
-                                    if window.size() == 10:
+                                    if window.size() >= 7:
                                         output_writer.writerow([window.startTime(), window.who_am_i(), window.average()])
 
                                 if compare_minute(window.startTime(), row[0]) > 9:
+                                    if window.size() >= 7:
+                                        output_writer.writerow([window.startTime(), window.who_am_i(), window.average()])
                                     window.empty()
                                     window.append(row)
                                     continue
@@ -86,10 +88,12 @@ def main(argv):
                             continue
                         if compare_minute(window.startTime(), row[0]) == 9:
                             window.append([row[0], window.who_am_i(), row[2]])
-                            if window.size() == 10:
+                            if window.size() >= 7:
                                 output_writer.writerow([window.startTime(), window.average()])
 
                         if compare_minute(window.startTime(), row[0]) > 9:
+                            if window.size() >= 7:
+                                output_writer.writerow([window.startTime(), window.average()])
                             window.empty()
                             window.append([row[0], window.who_am_i(), row[2]])
                             continue
