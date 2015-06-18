@@ -7,8 +7,22 @@ Engineering Notes:
 
 [#1] VFS 1-20 @port_assignments
 ================================================================================
-ai0 : temperature sensor
-ai1 : flow sensor
+ai0  : temperature sensor
+ai1  : flow sensor
+ai2  : Temperature_2 
+ai3  : Flow_2 
+ai4  : Temperature_3 
+ai5  : Flow_3 
+ai6  : Temperature_5 
+ai7  : Flow_5 
+ai8  : Temperature_4 
+ai9  : Flow_4 
+ai10 : Flow_6 
+ai11 : Temperature_7 
+ai12 : Flow_8 
+ai13 : Temperature_8 
+ai14 : Flow_7 
+ai15 : Temperature_6 
 
 Input File
 ================================================================================
@@ -117,12 +131,41 @@ def convert_output(input_location, output_location):
                         #[#1] VFS 1-20 temperature sensor
                         if row[1] == "ai0":
                             output_buffer.append(convert_temperature(row[2]))
-                        #[#1] VFS 1-20 Flow sensor
+                        #[#1] VFS 1-20 flow sensor
                         elif row[1] == "ai1":
                             output_buffer.append(convert_flow(row[2]))
+                        elif row[1] == "ai2":
+                            output_buffer.append(convert_temperature(row[2]))
+                        elif row[1] == "ai3":
+                            output_buffer.append(convert_flow(row[2]))
+                        elif row[1] == "ai4":
+                            output_buffer.append(convert_temperature(row[2]))
+                        elif row[1] == "ai5":
+                            output_buffer.append(convert_flow(row[2]))
+                        elif row[1] == "ai6":
+                            output_buffer.append(convert_temperature(row[2]))
+                        elif row[1] == "ai7":
+                            output_buffer.append(convert_flow(row[2]))
+                        elif row[1] == "ai8":
+                            output_buffer.append(convert_temperature(row[2]))
+                        elif row[1] == "ai9":
+                            output_buffer.append(convert_flow(row[2]))
+                        elif row[1] == "ai10":
+                            output_buffer.append(convert_flow(row[2]))
+                        elif row[1] == "ai11":
+                            output_buffer.append(convert_temperature(row[2]))
+                        elif row[1] == "ai12":
+                            output_buffer.append(convert_flow(row[2]))
+                        elif row[1] == "ai13":
+                            output_buffer.append(convert_temperature(row[2]))
+                        elif row[1] == "ai14":
+                            output_buffer.append(convert_flow(row[2]))
+                        elif row[1] == "ai15":
+                            output_buffer.append(convert_temperature(row[2]))
                         else:
                             #Increment error count
                             error_count = error_count + 1
+                            print "error @ "  + row[1]
                             continue
                         #======================================@port_assignments
 

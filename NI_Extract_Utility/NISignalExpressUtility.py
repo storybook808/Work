@@ -20,8 +20,32 @@ import datetime
 import csv 
 
 #dictionary for tacking on a sensor name & location to a corresponding port
-notes = {'ai0':"Temperature_1",
-         'ai1':"Flow_1",}
+'''notes = {'ai0':"Temperature_1",
+         'ai1':"Flow_1",
+		 'ai2':"Temperature_2",
+		 'ai3':"Flow_2",
+		 'ai4':"Temperature_3",
+		 'ai5':"Flow_3",
+		 'ai6':"Temperature_5",
+		 'ai7':"Flow_5",
+		 'ai8':"Temperature_4",
+		 'ai9':"Flow_4",
+		 'ai10':"Flow_6",
+		 'ai11':"Temperature_7",
+		 'ai12':"Flow_8",
+		 'ai13':"Temperature_8",
+		 'ai14':"Flow_7",
+		 'ai15':"Temperature_6"}'''
+		 
+#DAQ 2
+notes = {'ai0':"Temperature_9",
+		 'ai8':"Flow_9",
+		 'ai1':"Temperature_10",
+		 'ai9':"Flow_10",
+		 'ai2':"Temperature_Main",
+		 'ai10':"Flow_Main"}
+		 
+		 
 
 # Create Classes
 class GroupChannel:
@@ -268,7 +292,7 @@ class NISignalExpressUtility:
             new_channel_names = []        
             for name in channel_names:
                 name = name.split("_")
-                name = name[1]
+                name = name[2]
                 new_channel_names.append(name)
                 
             for row in reader:

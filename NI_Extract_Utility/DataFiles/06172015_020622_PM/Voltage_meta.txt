@@ -1,0 +1,33 @@
+Log name: 06/17/2015 02:06:22 PM
+User: eileen ellis
+Project name: C:\Users\eileen ellis\Desktop\Temp_Flow_Test_DAQ2.seproj
+File name: C:\Users\eileen ellis\Desktop\Documents\SignalExpress Data\06172015_020622_PM\Voltage.tdms
+File size: 14.81kB
+Log duration: 1 hour, 6 minutes, 58 seconds
+Log dt (s): 1
+Log iteration length (s): 1
+Number of sample in log: 4018
+Log datatype: Time-WDT-Real
+Unit: L/min
+Log start time: 6/17/2015 14:06:22.868
+Time zone: Hawaiian Standard Time
+Writer name: SignalExpress 2013
+Writer version: 7.0
+File format version: 2.1
+Log signal names:
+     06/17/2015 02:06:22 PM - Voltage - T9_Dev2_ai0
+     06/17/2015 02:06:22 PM - Voltage - T10_Dev2_ai1
+     06/17/2015 02:06:22 PM - Voltage - TMAIN_Dev2_ai2
+     06/17/2015 02:06:22 PM - Voltage - F9_Dev2_ai8
+     06/17/2015 02:06:22 PM - Voltage - F10_Dev2_ai9
+     06/17/2015 02:06:22 PM - Voltage - FMAIN_Dev2_ai10
+
+
+Alarms:
+None
+
+Start conditions:
+None
+
+Stop conditions:
+None

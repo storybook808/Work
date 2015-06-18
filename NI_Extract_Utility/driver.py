@@ -36,4 +36,4 @@ for data_folders in data_folders_locations:
     NIExtract.calibrate_output()
 
 #Enable only if the the collected data is from Grundfos VFS 1-20 sensor
-convert_output(calibrated_location, output_location)
+#convert_output(calibrated_location, output_location)
